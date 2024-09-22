@@ -44,6 +44,31 @@ class Individuo():
         self.nota_avaliacao = nota
         self.espaco_usado = soma_espacos
 
+#Função Crossover
+    def crossover(self, outro_individuo):
+        corte = round(random() *len(self.cromossomo)) #Ponto que define qual parte do cromossomo dos pais irá ser utilizada para gear um novo filho
+        
+        filho1 = outro_individuo.cromossomo[0:corte] + self.cromossomo[corte::]
+        filho2 = self.cromossomo[0:corte] + outro_individuo.cromossomo[corte::]
+
+        filhos = [Individuo(self.espacos, self.valores, self.limite_espacos, self.geracao + 1),
+                  Individuo(self.espacos, self.valores, self.limite_espacos, self.geracao + 1)]
+        filhos[0].cromossomos = filho1
+        filhos[1].cromossomos = filho2
+        return filhos
+    
+
+    #Função Mutação
+    def mutacao(self, taxa_mutacao):
+        print("Antes %s" % self.cromossomo)
+        for i in range(len(self.cromossomo)):
+            if random() < taxa_mutacao:
+                if self.cromossomo[i] == '1':
+                    self.cromossomo[i] = '0'
+                else:
+                    self.cromossomo[i] = '1'
+        print('Depois: %s' % self.cromossomo)
+        return self
 
 
 if __name__ == '__main__':
@@ -78,20 +103,30 @@ if __name__ == '__main__':
     limite = 3   #Limite de espaço no caminhâo 3m³
 
 
-    #Mostrar espacos, valores e cromossomo com solucao aleatoria
+   #Cria individuo, idenfica quais itens da lista de produtos ele irá levar, faz a avaliação Fitness e imprime nota e espaço usado
     individuo1 = Individuo(espacos, valores, limite)
-    print("Espaços = %s" %str(individuo1.espacos))
-    print("Valores = %s" %str(individuo1.valores))
-    print("Cromossomo= %s" %str(individuo1.cromossomo))
-
-
-    #Percorre lista de produtos e verifica valores binários da lista cromossomos para saber se o produto vai ser levado.
-    print("\nComponentes da carga")
+    print("\n Indivíduo 1")
     for i in range(len(lista_produtos)):
         if individuo1.cromossomo[i] == '1':
-            print("Nome: %s R$: %s" % (lista_produtos[i].nome, lista_produtos[i].valor))
-
-    #Teste Função de Fitness   
+            print("Nome: %s R$: %s" % (lista_produtos[i].nome, lista_produtos[i].valor))   
     individuo1.avaliacao()
     print('Nota = %s' % individuo1.nota_avaliacao)
     print ('Espaco usado %s' % individuo1.espaco_usado)
+
+
+    individuo2 = Individuo(espacos, valores, limite)
+    print("\n Indivíduo 2")
+    for i in range(len(lista_produtos)):
+        if individuo2.cromossomo[i] == '1':
+            print("Nome: %s R$: %s" % (lista_produtos[i].nome, lista_produtos[i].valor))   
+    individuo2.avaliacao()
+    print('Nota = %s' % individuo2.nota_avaliacao)
+    print ('Espaco usado %s' % individuo2.espaco_usado)
+
+
+    #Teste Crossover
+    individuo1.crossover(individuo2) #Fazer combinação entre os dois indivíduos - Indivíduo2 é outro_individuo
+
+    #Teste Mutação
+    individuo1.mutacao(0.05)
+    individuo2.mutacao(0.05)
