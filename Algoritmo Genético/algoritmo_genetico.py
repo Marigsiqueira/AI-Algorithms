@@ -1,7 +1,6 @@
 from random import random
 
 #Classe produto que armazena os produtos
-
 class Produto():
     def __init__(self, nome, espaco, valor): 
       self.nome = nome
@@ -15,13 +14,13 @@ class Produto():
 
 
 #Classe para armazenar individuos
-
 class Individuo():
     def __init__(self, espacos, valores, limite_espacos, geracao=0):
         self.espacos = espacos
         self.valores = valores
         self.limite_espacos = limite_espacos 
         self.nota_avaliacao = 0
+        self.espaco_usado = 0
         self.geracao = geracao
         self.cromossomo = []
 
@@ -31,6 +30,19 @@ class Individuo():
                 self.cromossomo.append("0")
             else:
                 self.cromossomo.append('1')
+    
+    #Função de Fitness
+    def avaliacao(self):
+        nota = 0
+        soma_espacos = 0
+        for i in range(len(self.cromossomo)):
+            if self.cromossomo[i] == '1':
+                nota += self.valores[i]
+                soma_espacos += self.espacos[i]
+        if soma_espacos > self.limite_espacos:
+            nota = 1 #Rebaixando nota do individuo
+        self.nota_avaliacao = nota
+        self.espaco_usado = soma_espacos
 
 
 
@@ -73,3 +85,13 @@ if __name__ == '__main__':
     print("Cromossomo= %s" %str(individuo1.cromossomo))
 
 
+    #Percorre lista de produtos e verifica valores binários da lista cromossomos para saber se o produto vai ser levado.
+    print("\nComponentes da carga")
+    for i in range(len(lista_produtos)):
+        if individuo1.cromossomo[i] == '1':
+            print("Nome: %s R$: %s" % (lista_produtos[i].nome, lista_produtos[i].valor))
+
+    #Teste Função de Fitness   
+    individuo1.avaliacao()
+    print('Nota = %s' % individuo1.nota_avaliacao)
+    print ('Espaco usado %s' % individuo1.espaco_usado)
